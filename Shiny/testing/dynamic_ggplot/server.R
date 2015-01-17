@@ -9,6 +9,7 @@ shinyServer(function(input, output) {
           
     if (is.null(inFile)) {
       return(NULL)
+      
     } else if (input$data_type == ".rdata") {
       load(inFile$datapath)    
       file_just_loaded = ls()[!(ls() %in% c(current_files, "current_files"))]
@@ -16,14 +17,18 @@ shinyServer(function(input, output) {
       if (length(file_just_loaded) > 1) 
         return("Error: .rdata object must contain only one data.frame like object")      
       else 
-        get(file_just_loaded)
+        imported_data = get(file_just_loaded)
       
     } else {
-      fread(inFile$datapath)
-    } 
-      
-  })
+      imported_data = fread(inFile$datapath)      
+    }
+    
+    names(imported_data) = gsub(x = names(imported_data), pattern = " ", replacement = "_", fixed = T)
   
+    imported_data 
+  })
+    
+      
   output$table <- renderTable({
     dataset()
   })
@@ -40,10 +45,22 @@ shinyServer(function(input, output) {
     selectInput('y', 'Y', names(dataset()))
   })
   
+  output$ui_plot_type <- renderUI({
+    if (is.null(dataset()))
+      return(NULL)
+    selectInput('plot_type', 'Plot Type', c("Scatterplot", "Lineplot", "Histogram", "Density", "Boxplot", "Barplot"))
+  })  
+    
   output$ui_color <- renderUI({
     if (is.null(dataset()))
       return(NULL)            
     selectInput('color', 'Color', c('None', names(dataset())))
+  })
+  
+  output$ui_smooth_checkbox <- renderUI({
+    if (is.null(dataset()))
+      return(NULL)
+    checkboxInput('smooth', 'Smooth')
   })
   
   output$ui_facet_row <- renderUI({
@@ -66,9 +83,9 @@ shinyServer(function(input, output) {
     
     p <- ggplot(dataset(), aes_string(x=input$x, y=input$y)) 
     
-    if (input$plot_type == "Scatter") 
+    if (input$plot_type == "Scatterplot") 
       p <- p + geom_point() 
-    else if (input$plot_type == "Line") 
+    else if (input$plot_type == "Lineplot") 
       p <- p + geom_line() 
     
     if (input$color != 'None')

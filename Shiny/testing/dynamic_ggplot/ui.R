@@ -5,7 +5,7 @@ library(ggplot2)
 
 shinyUI(fluidPage(
   
-  h2("Dynamic ggplot2"),
+  h1("Dynamic ggplot2"),
   
   br(),
   tabsetPanel(type = "tabs", 
@@ -16,8 +16,8 @@ shinyUI(fluidPage(
   
   fluidRow(
     column(3,
-           h4("Import data"),
-           selectInput('data_type', 'Data Type', c(".rdata", "comma (.csv) or tab (.tsv) delimited or plain text")),
+           h4("Import and filter data"),
+           selectInput('data_type', 'Data Type', c("delimited file (.csv, .tsv, .txt, etc.)", ".rdata", "Excel (.xlsx)")),
            fileInput('data_import', 'Choose file to upload',
                      accept = c(
                        'text/csv',
@@ -26,33 +26,26 @@ shinyUI(fluidPage(
                        'text/plain',
                        '.csv',
                        '.tsv',
-                       '.rdata'
+                       '.rdata', 
+                       '.xlsx'
                      )
            ),
            br()           
     ), 
-    column(4, offset = 1,
+    column(3, offset = .5,
            h4("Plot options"),
            uiOutput("ui_x"),          
-           uiOutput("ui_y"),
-           # selectInput('x', 'X', names(dataset())),          
-           # selectInput('y', 'Y', names(dataset())),
-           selectInput('plot_type', 'Plot Type', c("Scatter", "Line")),
+           uiOutput("ui_y"),           
+           uiOutput("ui_plot_type"),
            uiOutput("ui_color"),
-           br()
-          # selectInput('color', 'Color', c('None', names(dataset())))
+           br()          
     ),
-    column(4,
-           h4("Theme options"),
+    column(3,
+           h4("Theme and export options"),
            uiOutput("ui_facet_row"),
-           uiOutput("ui_facet_col"),
-           # selectInput('facet_row', 'Facet Row',
-          #           c(None='.', names(dataset()[sapply(dataset(), is.factor)]))),          
-          # selectInput('facet_col', 'Facet Column',
-            #            c(None='.', names(dataset()[sapply(dataset(), is.factor)]))),
-           checkboxInput('smooth', 'Smooth'),
+           uiOutput("ui_facet_col"),           
+           uiOutput("ui_smooth_checkbox"),
           br()
     )
-    
     
 )))
