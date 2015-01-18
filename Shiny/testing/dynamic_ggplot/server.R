@@ -4,7 +4,7 @@ library(data.table)
 
 shinyServer(function(input, output) {  
   
-  ##### Imported data #####
+  ##### Import and clean data #####
   dataset <- reactive({
     inFile = input$data_import
     current_files = ls()    
