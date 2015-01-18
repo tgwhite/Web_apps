@@ -3,6 +3,8 @@ library(ggplot2)
 library(data.table)
 
 shinyServer(function(input, output) {  
+  
+  ##### Imported data #####
   dataset <- reactive({
     inFile = input$data_import
     current_files = ls()    
@@ -28,10 +30,13 @@ shinyServer(function(input, output) {
     imported_data 
   })
     
-      
+  ##### Table output ##### 
+  
   output$table <- renderTable({
-    dataset()
+    rbind(head(dataset()), tail(dataset()))
   })
+  
+  ##### Dynamic UI elements #####
   
   output$ui_x <- renderUI({
     if (is.null(dataset())) 
@@ -76,9 +81,9 @@ shinyServer(function(input, output) {
     
     selectInput('facet_col', 'Facet Column',
                c(None='.', names(dataset()[sapply(dataset(), is.factor)])))
-  })    
-  
+  })      
 
+  ##### Plot #####
   output$plot <- renderPlot({
     
     p <- ggplot(dataset(), aes_string(x=input$x, y=input$y)) 
@@ -98,8 +103,11 @@ shinyServer(function(input, output) {
     if (input$smooth)
       p <- p + geom_smooth()
     
-    print(p)
-    
+    print(p)    
   })
   
+  ##### Included text #####  
+  output$text_output <- renderText({
+    includeText("text_markdown_files/soliloquy.txt")
+  })    
 })

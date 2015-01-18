@@ -1,5 +1,4 @@
 
-
 library(shiny)
 library(ggplot2)
 
@@ -9,8 +8,10 @@ shinyUI(fluidPage(
   
   br(),
   tabsetPanel(type = "tabs", 
+              tabPanel("Home", textOutput("text_output")),
               tabPanel("Plot", plotOutput("plot")),             
-              tabPanel("Table", tableOutput("table"))),
+              tabPanel("Table", tableOutput("table")) 
+              ),
   
   hr(),
   
@@ -29,10 +30,11 @@ shinyUI(fluidPage(
                        '.rdata', 
                        '.xlsx'
                      )
-           ),
-           br()           
+           ),           
+           textInput("filter_text", "Custom Filtering Code", "None"),
+           br(), br(), br()           
     ), 
-    column(3, offset = .5,
+    column(4, offset = .5,
            h4("Plot options"),
            uiOutput("ui_x"),          
            uiOutput("ui_y"),           
